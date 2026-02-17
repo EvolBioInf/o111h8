@@ -1,10 +1,11 @@
-* Analyzing the Genome Taxonomy of *Escherichia coli* Serotype O111:H7
-Serotype O111 belongs to the "Big Six" *Escherichia coli* taxa causing
-the bulk of food poisoning in the US and beyond. Here we analyze the
-subtype with H7 flagella antigen in the context of all *E. coli*
-genomes. This analysis is part of our forthcoming manuscript entitled
-"Fast ANI Computation to Assess the Taxonomy of Bacterial Genomes at
-the Subspecies Level"
+* Analyzing the Genome Taxonomy of /Escherichia coli/ Serotype O111:H7
+Serotype O111 belongs to the "[[https://pmc.ncbi.nlm.nih.gov/articles/PMC9693546/][Big Six]]" /Escherichia coli/ taxa causing
+food poisoning in the US and beyond. Here we analyze the subtype with
+H7 flagella antigen in the context of all /E. coli/ genomes with a
+view to designing serotype-specific diagnostic markers. This analysis
+is part of our forthcoming manuscript entitled "Fast ANI Computation
+to Assess the Taxonomy of Bacterial Genomes at the Subspecies Level"
 
 ** Authors
-Beatriz Vieira Mourato, Sara-Lena Welk, Fabian Klötzl, Bernhard Haubold
+Beatriz Vieira Mourato, Sara-Lena Welk, Fabian Klötzl, and Bernhard
+Haubold
