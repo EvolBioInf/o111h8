@@ -1,11 +1,23 @@
-* Analyzing the Genome Taxonomy of /Escherichia coli/ Serotype O111:H7
+* [[https://owncloud.gwdg.de/index.php/s/jzF2dkp7L5xjqP1][Identifying the Genomes of /Escherichia coli/ O111:H7]]
 Serotype O111 belongs to the "[[https://pmc.ncbi.nlm.nih.gov/articles/PMC9693546/][Big Six]]" /Escherichia coli/ taxa causing
-food poisoning in the US and beyond. Here we analyze the subtype with
-H7 flagella antigen in the context of all /E. coli/ genomes with a
-view to designing serotype-specific diagnostic markers. This analysis
-is part of our forthcoming manuscript entitled "Fast ANI Computation
-to Assess the Taxonomy of Bacterial Genomes at the Subspecies Level"
+food poisoning in the US and beyond. In this tutorial we analyze the
+subtype with H8 flagella antigen in the context of all /E. coli/
+genomes with a view to designing serotype-specific diagnostic
+markers. This analysis is part of a forthcoming manuscript.
 
 ** Authors
 Beatriz Vieira Mourato, Sara-Lena Welk, Fabian Klötzl, and Bernhard
 Haubold
+
+** Dependencies
+This tutorial has five main dependencies:
+- [[https://github.com/evolbioinf/neighbors][Neighbors]] for finding target and neighbor genomes
+- [[https://www.ncbi.nlm.nih.gov/datasets/][`datasets`]] for downloading genomes
+- [[https://github.com/evolbioinf/fur][Fur]] for finding unique genome regions
+- [[https://github.com/evolbioinf/prim/][Prim]] for designing PCR primers
+- [[https://github.com/evolbioinf/biobox][Biobox]] for general sequence manipulation
+
+** Download Data Set
+Execute `make` to generate the directory `data` containing the
+Neighbors database, `neidb`, and the tree of all complete genomes of
+/Escherichia coli/, `all.nwk`.

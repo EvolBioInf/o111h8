@@ -1,0 +1,161 @@
+#+begin_export latex
+We assume that your directory contains the database \ty{neidb} and the
+tree file \ty{all.nwk}, which both come with the \ty{o111h8} repo. We
+count the 7073 taxa on the tree by picking its root, node 1, and
+counting the listed leaves.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 1 all.nwk |
+      grep -c -v '^#'
+#+end_src
+#+begin_export latex
+We determine the taxa with complete genomes that belong to the
+taxonomic subtree rooted on 991910. It turns out there is only one,
+991910 itself.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  neighbors -L complete -t 991910 -o -l neidb |
+      grep -v '^#' |
+      awk '{print $3}' |
+      sort |
+      uniq 
+#+end_src
+#+begin_export latex
+We count the 22 genomes on the tree classified as O111:H8.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 1 all.nwk |
+      grep -c '^991910_'
+#+end_src
+#+begin_export latex
+We use \ty{fintac} to find the clade with the largest split between
+O111:H8 genomes and the rest. This is clade 5041 with 7 targets an 3
+non-targets, or \emph{neighbors}.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  fintac -t '^991910_' all.nwk
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+#Clade  Targets  Neighbors  Split (%)  Parent  Dist(Parent)
+5041    7        3          99.75      5032    2.13e-05
+\end{verbatim}
+#+end_export
+#+begin_export latex
+We suspect that the missing 15 O111:H8 genomes are close by and climb
+the tree to find the line of 38 ancestral nodes of 5041.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  climt 5041 all.nwk
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+# Up   Node   Branch Length   Cumulative Branch Length
+38     1      0               0.01981767
+...
+13     5005   0.000146        0.00063167
+12     5007   0.000385        0.00024667
+11     5008   1.45e-05        0.00023217
+10     5018   2.63e-05        0.00020587
+9      5019   3.1e-05         0.00017487
+8      5020   3.48e-05        0.00014007
+7      5021   8.27e-06        0.0001318
+6      5023   1.62e-05        0.0001156
+5      5025   2.18e-05        9.38e-05
+4      5027   2.74e-05        6.64e-05
+3      5028   2.01e-05        4.63e-05
+2      5029   1.23e-05        3.4e-05
+1      5032   1.27e-05        2.13e-05
+0      5041   2.13e-05        0
+\end{verbatim}
+We look for the most recent common ancestor of all O111:H8 genomes on
+the tree. For this we scan the branch lengths going from 5041 towards
+the root and notice that the branches are very short up until node
+5007. We hypothesize that this is the most recent common ancestor. If
+this were true, we'd find the 22 target genomes in node 5007 and less
+than 22 target genomes in its immediate child, node 5008. We look at
+node 5007 first and find that, as hypothesized, it contains our 22
+target genomes.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 5007 all.nwk |
+      grep -c '^991910_'
+#+end_src
+#+begin_export latex
+We also find that 5008 contains only 21 target genomes, which makes
+node 5007 our target clade.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 5008 all.nwk |
+      grep -c '^991910_'
+#+end_src
+#+begin_export latex
+To put our target clade in context, we plot the subtree rooted on its
+parent, 5005, without the labels of the internal nodes, to get
+Figure~\ref{fig:all}.
+\begin{figure}
+  \begin{center}
+    \includegraphics{../query/all}
+  \end{center}
+  \caption{The complete genomes of \emph{Escherichia coli} O111:H8,
+    taxon-ID 991910, in the context of all other complete genomes of
+    \emph{E. coli}.}\label{fig:all}
+\end{figure}
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle -t 5005 all.nwk |
+      land -r |
+      plotTree
+#+end_src
+#+begin_export latex
+We count the 48 complete genomes on node 5007. This means we have
+discovered 26 complete genomes of \emph{E. coli} O111:H8 that were
+previously classified differently.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 5007 all.nwk |
+      grep -v '^#' -c
+#+end_src
+#+begin_export latex
+Let's take a closer at the taxa in our target clade. Apart from the 22
+O111:H8 genomes, we find 18 \emph{E. coli} (562). We shall look up the
+remaining five taxon-IDs in a moment.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 5007 all.nwk |
+    grep -v '^#' |
+    tr '_' ' ' |
+    awk '{print $1}' |
+    sort |
+    uniq -c |
+    sort -n -r
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+     22 991910
+     18 562
+      4 373045
+      1 585396
+      1 397453
+      1 168927
+      1 1055542
+\end{verbatim}
+The remaining five taxa are all classified as serotype O111, which is
+reassuring, albeit not O111:H8.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  for a in 373045 585396 397453 168927 1055542; do
+      echo "# $a"
+      ants $a neidb |
+	  tail -n 3
+  done
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+# 373045
+  2     561      Escherichia               genus
+  1     562      Escherichia coli          species
+  0     373045   Escherichia coli O111:NM  no rank
+...
+\end{verbatim}
+#+end_export

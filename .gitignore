@@ -1,0 +1,17 @@
+data
+doc/*.aux
+doc/*.dvi
+doc/*.log
+doc/*.out
+doc/*.pdf
+doc/pilot.tex
+doc/query.tex
+doc/intro.tex
+pilot/*
+!pilot/all.ps
+!pilot/Makefile
+!pilot/pilot.org
+query/*
+!query/all.ps
+!query/Makefile
+!query/query.org

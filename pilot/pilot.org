@@ -1,0 +1,301 @@
+#+begin_export latex
+We assume your working directory contains a copy of the Neighbors
+database, \ty{neidb}, which comes with this repo.  Given the Neighbors
+database, we focus on \emph{E. coli} O111:H8. So we get its genomes
+and that of some of its close relatives, rename their files, calculate
+the phylogeny, and analyze the phylogeny.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  ##<<Get genomes, Ch. \ref{ch:p}>>
+  ##<<Rename genome files, Ch. \ref{ch:p}>>
+  ##<<Calculate phylogeny, Ch. \ref{ch:p}>>
+  ##<<Analyze phylogeny, Ch. \ref{ch:p}>>
+#+end_src
+#+begin_export latex
+To get the genomes, we first look up the taxon-ID of O111:H8,
+991910. Its parent is taxon 562, the species \emph{E. coli}.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  taxi O111:H8 neidb
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+# ID       Parent  Name
+  991910   562     Escherichia coli O111:H8
+  1446508  991910  Escherichia coli O111:H8 str. 2009C-4126
+  1446509  991910  Escherichia coli O111:H8 str. 2009EL-2169
+\end{verbatim}
+The \emph{neighbors} of a taxonomic target $t$ are all the taxa in the
+subtree rooted on the parent of $t$ that belong neither to the target
+nor to the parent.  We look at the first 30 rows of the list of
+complete target and neighbor genomes for O111:H8. For each genome we
+get three pieces of information, a ``t'' or an ``n'' indicating target
+or neighbor, the accession, and the taxon-ID.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  neighbors -l -L complete -t 991910 neidb |
+      head -n 30
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+# Sample  Accession        Taxid
+t         GCF_049489415.1  991910
+t         GCF_049489465.1  991910
+...
+n         GCF_000974465.1  83333
+n         GCF_000974505.1  83333
+\end{verbatim}
+There are 22 target genomes, that is, genomes of O111:H8.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  neighbors -l -L complete -t 991910 neidb |
+      grep -c '^t'
+#+end_src
+#+begin_export latex
+There are 528 neighbor genomes, that is, genomes classified as
+belonging neither to O111:H8 nor to its parent.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  neighbors -l -L complete -t 991910 neidb |
+      grep -c '^n'
+#+end_src
+#+begin_export latex
+If we take the species \emph{E. coli} as target and count all of its
+complete genomes, we get 7172. This tells us that only a small
+fraction, $(528+22)/7172\times 100\approx 8\%$ of \emph{E. coli} genomes are
+classified below the species level, when probably they all also belong
+to a category below that level.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  neighbors -l -L complete -t 562 -o neidb |
+      grep -c '^t'
+#+end_src
+#+begin_export latex
+For our pilot analysis we pick all 22 target genomes and the first 28
+neighbor genomes, a total of 50, and store them in a file of
+accessions and taxa, \ty{accTax.txt}.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  neighbors -l -L complete -t 991910 neidb |
+      grep '^[tn]' |
+      head -n 50 > accTax.txt
+#+end_src
+#+begin_export latex
+To prepare for downloading the genome sequences corresponding to the
+accessions we just saved, we extract their accessions into a separate
+file, \ty{acc.txt}.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  awk '{print $2}' accTax.txt > acc.txt
+#+end_src
+#+begin_export latex
+We use the program \ty{datasets} to download the genomes in
+``dehydrated'' form excluding any ``atypical'' genomes the sample
+might contain.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  datasets download genome accession \
+	   --inputfile acc.txt \
+	   --dehydrated \
+	   --exclude-atypical
+#+end_src
+#+begin_export latex
+We unzip the file we just downloaded and ``rehydrate'' it, which
+downloads the actual genome sequences.
+#+end_export
+#+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
+  unzip ncbi_dataset.zip
+  datasets rehydrate --directory .
+#+end_src
+#+begin_export latex
+The files we have downloaded are contained in subdirectories and have
+rather long names containing redundant information, for example
+\begin{verbatim}
+GCF_000981485.1_EcoliK12AG100_genomic.fna
+\end{verbatim}
+The file names later become leaf labels in our phylogeny. Since our
+aim is to classify genomes, we rename the files on the pattern
+$<$taxon-ID$>$\_$<$accession$>$. We also extract them from their
+subdirectories and put them into a single directory, \ty{all}, which
+we create first.
+#+end_export
+#+begin_src sh <<Rename genome files, Ch. \ref{ch:p}>>=
+  mkdir all
+#+end_src
+#+begin_export latex
+For renaming, we iterate over the genome files. For each file, we get
+the accession, and with that we get the taxon. From the accession and
+the taxon-ID we construct the new name, to which we link the file
+inside \ty{all}.
+#+end_export
+#+begin_src sh <<Rename genome files, Ch. \ref{ch:p}>>=
+  for file in $(ls ncbi_*/*/*/*.fna); do
+      ##<<Get accession, Ch. \ref{ch:p}>>
+      ##<<Get taxon-ID, Ch. \ref{ch:p}>>
+      ##<<Construct new name, Ch. \ref{ch:p}>>
+      ##<<Link file into \ty{all}, Ch. \ref{ch:p}>>
+  done
+#+end_src
+#+begin_export latex
+We get the accession from the base name of the file by deleting
+everything else.
+#+end_export
+#+begin_src sh <<Get accession, Ch. \ref{ch:p}>>=
+  acc=$(basename $file |
+	    sed -E 's/(G.._[^_]+)_.*/\1/')
+#+end_src
+#+begin_export latex
+We get the accession's taxon-ID from the file \ty{accTax.txt}.
+#+end_export
+#+begin_src sh <<Get taxon-ID, Ch. \ref{ch:p}>>=
+  tax=$(grep $acc accTax.txt |
+	    awk '{print $3}')
+#+end_src
+#+begin_export latex
+For the new name, we concatenate the taxon-ID with the accession via
+an underscore.
+#+end_export
+#+begin_src sh <<Construct new name, Ch. \ref{ch:p}>>=
+  name="${tax}_${acc}"
+#+end_src
+#+begin_export latex
+We create a symbolic link from the original file to the new name
+inside \ty{all}.
+#+end_export
+#+begin_src sh <<Link file into \ty{all}, Ch. \ref{ch:p}>>=
+  ln -s $(pwd)/$file all/$name
+#+end_src
+#+begin_export latex
+We calculate the pairwise distances between the genomes and transform
+them into a neighbor-joining tree. This is midpoint rooted before we
+store it in Newick format in the file \ty{all.nwk}.
+#+end_export
+#+begin_src sh <<Calculate phylogeny, Ch. \ref{ch:p}>>=
+  phylonium all/* |
+      nj |
+      midRoot > all.nwk
+#+end_src
+#+begin_export latex
+We inspect the tree to get Figure~\ref{fig:o111}, where all taxa with
+the taxon-ID of O111:H8, 991910, cluster together, as they
+should. Moreover, the 991910 clade contains no extraneous accession,
+it is monophyletic.
+\begin{figure}
+  \begin{center}
+    \includegraphics{../pilot/all}
+  \end{center}
+  \caption{Phylogeny of 50 strains of \emph{Escherichia coli}; the top
+    clade with taxon 991910 corresponds to our focal serotype
+    O111:H8.}\label{fig:o111}
+\end{figure}
+#+end_export
+#+begin_export latex
+It is easy to inspect a tree with 50 taxa like
+Figure~\ref{fig:o111}. However, let's go through the steps we would
+take when analyzing a tree too large for manual inspection. In that
+case we first label the internal nodes of the tree.
+#+end_export
+#+begin_src sh <<Analyze phylogeny, Ch. \ref{ch:p}>>=
+  land all.nwk > t
+  mv t all.nwk
+#+end_src
+#+begin_export latex
+Now we can automatically find our target clade, 29, with the program
+\ty{fintac}. Its output tells us that clade 29 has a perfect ``split''
+in the sense that it contains only O111:H8 and its complement contains
+none. We also note that the distance to its parent is $6\times
+10^{-3}$ substitutions per site. This isn't a lot, but
+Figure~\ref{fig:o111} shows that this branch clearly separates O111:H8
+from the other \emph{E. coli} strains in the tree.
+#+end_export
+#+begin_src sh <<Analyze phylogeny, Ch. \ref{ch:p}>>=
+  fintac -t 991910 all.nwk
+#+end_src
+#+begin_export latex
+\begin{verbatim}
+#Clade  Targets  Neighbors  Split (%)  Parent  Dist(Parent)
+29      22       0          100.00     6       0.006
+\end{verbatim}
+#+end_export
+#+begin_export latex
+We can also pick the node identified by \ty{fintac} to count the 22
+strains of O111:H8 it contains.
+#+end_export
+#+begin_src sh <<Analyze phylogeny, Ch. \ref{ch:p}>>=
+  pickle 29 all.nwk |
+      grep -c 991910
+#+end_src
+#+begin_export latex
+Given that we have identified target and neighbor genomes, we can
+construct markers for the target genomes by identifying the genome
+regions that appear in all target genomes that are absent from the
+neighbors. We use the program \ty{fur} for finding these unique genome
+regions. It runs on a database constructed with \ty{makeFurDb}, which
+takes as input a directory of target genomes and a directory of
+neighbors genomes. We first construct the directory of target genomes,
+\ty{targets}.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  mkdir targets
+  pickle 29 all.nwk |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} targets/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+The directory of neighbors genomes, \ty{neighbors}, holds the
+complement of the target genomes.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  mkdir neighbors
+  pickle -c 29 all.nwk |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} neighbors/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+We construct the Fur database, \ty{o111h8.db}. This takes roughly
+14\,s on our consumer-grade laptop.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  makeFurDb -t targets -n neighbors -d o111h8.db
+#+end_src
+#+begin_export latex
+We use \ty{fur} to extract the marker candidates from the Fur
+database.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  fur -d o111h8.db |
+      cleanSeq > o111h8.fasta
+#+end_src
+#+begin_export latex
+This yields 157\,kb marker candidates.
+#+end_export
+#+begin_export latex
+cres o111h8.fasta
+#+end_export
+#+begin_export latex
+To extract primers from the marker candidates, we convert them to
+input for primer construction, run \ty{primers3} on them, and extract
+the top primer pairs from them, the best of which has penalty 0.04.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  fa2prim o111h8.fasta |
+      primer3_core |
+      prim2tab |
+      head
+#+end_src
+#+begin_export latex
+We find that the best primer pair has a penalty of
+\begin{verbatim}
+# Penalty Forward              Reverse               ...
+0.041314  CATGATTTTAAAGGGCGTGC TAGGCAGTATTTGGTGTTGC  ...
+...
+\end{verbatim}
+#+end_export
+#+begin_export latex
+Please note that in a production setting we would use the full
+neighborhood for marker construction. See our MS for results on that.
+#+end_export
