@@ -6,6 +6,8 @@ all: $(src) o111h8Doc.pdf
 	bash ../scripts/org2nw $< | noweave -n -x > $@
 o111h8Doc.pdf: o111h8Doc.tex $(src) header.tex
 	latex o111h8Doc
+	bibtex o111h8Doc
+	latex o111h8Doc
 	latex o111h8Doc
 	dvipdf -dALLOWPSTRANSPARENCY o111h8Doc
 publish: $(docs)/o111h8Doc.pdf

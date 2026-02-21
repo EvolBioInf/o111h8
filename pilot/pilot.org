@@ -1,9 +1,14 @@
 #+begin_export latex
-We assume your working directory contains a copy of the Neighbors
-database, \ty{data/neidb}, which comes with this repo.  Given the Neighbors
-database, we focus on \emph{E. coli} O111:H8. So we get its genomes
-and that of some of its close relatives, rename their files, calculate
-the phylogeny, and analyze the phylogeny.
+Our working directory is \ty{tutorial} inside the \ty{o111h8} repo. We
+start by linking the Neighbors database.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  ln -s ../data/neidb
+#+end_src
+#+begin_export latex
+We focus on \emph{E. coli} O111:H8. So we get its genomes and that of
+some of its close relatives, rename their files, calculate the
+phylogeny, and analyze the phylogeny.
 #+end_export
 #+begin_src sh <<pilot.sh>>=
   ##<<Get genomes, Ch. \ref{ch:p}>>
@@ -16,7 +21,7 @@ To get the genomes, we first look up the taxon-ID of O111:H8,
 991910. Its parent is taxon 562, the species \emph{E. coli}.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
-  taxi O111:H8 data/neidb
+  taxi O111:H8 neidb
 #+end_src
 #+begin_export latex
 \begin{verbatim}
@@ -33,7 +38,7 @@ get three pieces of information, a ``t'' or an ``n'' indicating target
 or neighbor, the accession, and the taxon-ID.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
-  neighbors -l -L complete -t 991910 data/neidb |
+  neighbors -l -L complete -t 991910 neidb |
       head -n 30
 #+end_src
 #+begin_export latex
@@ -48,7 +53,7 @@ n         GCF_000974505.1  83333
 There are 22 target genomes, that is, genomes of O111:H8.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
-  neighbors -l -L complete -t 991910 data/neidb |
+  neighbors -l -L complete -t 991910 neidb |
       grep -c '^t'
 #+end_src
 #+begin_export latex
@@ -56,7 +61,7 @@ There are 528 neighbor genomes, that is, genomes classified as
 belonging neither to O111:H8 nor to its parent.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
-  neighbors -l -L complete -t 991910 data/neidb |
+  neighbors -l -L complete -t 991910 neidb |
       grep -c '^n'
 #+end_src
 #+begin_export latex
@@ -67,7 +72,7 @@ classified below the species level, when probably they all also belong
 to a category below that level.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
-  neighbors -l -L complete -t 562 -o data/neidb |
+  neighbors -l -L complete -t 562 -o neidb |
       grep -c '^t'
 #+end_src
 #+begin_export latex
@@ -76,7 +81,7 @@ neighbor genomes, a total of 50, and store them in a file of
 accessions and taxa, \ty{accTax.txt}.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
-  neighbors -l -L complete -t 991910 data/neidb |
+  neighbors -l -L complete -t 991910 neidb |
       grep '^[tn]' |
       head -n 50 > accTax.txt
 #+end_src
@@ -226,76 +231,10 @@ strains of O111:H8 it contains.
       grep -c 991910
 #+end_src
 #+begin_export latex
-Given that we have identified target and neighbor genomes, we can
-construct markers for the target genomes by identifying the genome
-regions that appear in all target genomes that are absent from the
-neighbors. We use the program \ty{fur} for finding these unique genome
-regions. It runs on a database constructed with \ty{makeFurDb}, which
-takes as input a directory of target genomes and a directory of
-neighbors genomes. We first construct the directory of target genomes,
-\ty{targets}.
+We end the pilot section of this tutorial by cleaning up our working
+directory.
 #+end_export
 #+begin_src sh <<pilot.sh>>=
-  mkdir targets
-  pickle 29 all.nwk |
-      grep -v '^#' |
-      while read name; do
-	  ln -s $(pwd)/all/${name} targets/${name}.fasta
-      done
+  rm -r accTax.txt acc.txt all all.nwk md5sum.txt \
+     ncbi_dataset ncbi_dataset.zip README.md
 #+end_src
-#+begin_export latex
-The directory of neighbors genomes, \ty{neighbors}, holds the
-complement of the target genomes.
-#+end_export
-#+begin_src sh <<pilot.sh>>=
-  mkdir neighbors
-  pickle -c 29 all.nwk |
-      grep -v '^#' |
-      while read name; do
-	  ln -s $(pwd)/all/${name} neighbors/${name}.fasta
-      done
-#+end_src
-#+begin_export latex
-We construct the Fur database, \ty{o111h8.db}. This takes roughly
-14\,s on our consumer-grade laptop.
-#+end_export
-#+begin_src sh <<pilot.sh>>=
-  makeFurDb -t targets -n neighbors -d o111h8.db
-#+end_src
-#+begin_export latex
-We use \ty{fur} to extract the marker candidates from the Fur
-database.
-#+end_export
-#+begin_src sh <<pilot.sh>>=
-  fur -d o111h8.db |
-      cleanSeq > o111h8.fasta
-#+end_src
-#+begin_export latex
-This yields 157\,kb marker candidates.
-#+end_export
-#+begin_export latex
-cres o111h8.fasta
-#+end_export
-#+begin_export latex
-To extract primers from the marker candidates, we convert them to
-input for primer construction, run \ty{primers3} on them, and extract
-the top primer pairs from them, the best of which has penalty 0.04.
-#+end_export
-#+begin_src sh <<pilot.sh>>=
-  fa2prim o111h8.fasta |
-      primer3_core |
-      prim2tab |
-      head
-#+end_src
-#+begin_export latex
-We find that the best primer pair has a penalty of
-\begin{verbatim}
-# Penalty Forward              Reverse               ...
-0.041314  CATGATTTTAAAGGGCGTGC TAGGCAGTATTTGGTGTTGC  ...
-...
-\end{verbatim}
-#+end_export
-#+begin_export latex
-Please note that in a production setting we would use the full
-neighborhood for marker construction. See our MS for results on that.
-#+end_export

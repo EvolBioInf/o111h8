@@ -1,16 +1,30 @@
 #+begin_export latex
-We assume that your directory contains the database \ty{neidb} and the
-tree file \ty{data/all.nwk}, which both come with the \ty{o111h8} repo. We
-count the 7073 taxa on the tree by picking its root, node 1, and
+\section{Query Phylogeny}
+Again, our working directory is \ty{tutorial} inside the \ty{o111h8}
+repo. We link the phylogeny of all complete \emph{E. coli} genomes
+calculated with \ty{phylonium}.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  ln -s ../data/all.nwk
+#+end_src
+#+begin_export latex
+We count the 7073 taxa on the tree by picking its root, node 1, and
 counting the listed leaves.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle 1 data/all.nwk |
+  pickle 1 all.nwk |
       grep -c -v '^#'
 #+end_src
 #+begin_export latex
-We determine the taxa with complete genomes that belong to the
-taxonomic subtree rooted on 991910. It turns out there is only one,
+We next determine the taxa with complete genomes that belong to the
+taxonomic subtree rooted on 991910. We use the program \ty{neighbors}
+for this, which requires the Neighbors database, so we link this.
+#+end_export
+#+begin_src sh <<query.sh>>=
+ln -s ../data/neidb
+#+end_src
+#+begin_export latex
+It turns out there is only one taxon in the subtree rooted on 991910,
 991910 itself.
 #+end_export
 #+begin_src sh <<query.sh>>=
@@ -24,7 +38,7 @@ taxonomic subtree rooted on 991910. It turns out there is only one,
 We count the 22 genomes on the tree classified as O111:H8.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle 1 data/all.nwk |
+  pickle 1 all.nwk |
       grep -c '^991910_'
 #+end_src
 #+begin_export latex
@@ -33,7 +47,7 @@ O111:H8 genomes and the rest. This is clade 5041 with 7 targets an 3
 non-targets, or \emph{neighbors}.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  fintac -t '^991910_' data/all.nwk
+  fintac -t '^991910_' all.nwk
 #+end_src
 #+begin_export latex
 \begin{verbatim}
@@ -46,7 +60,7 @@ We suspect that the missing 15 O111:H8 genomes are close by and climb
 the tree to find that there are 38 ancestral nodes of 5041.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  climt 5041 data/all.nwk
+  climt 5041 all.nwk
 #+end_src
 #+begin_export latex
 \begin{verbatim}
@@ -79,7 +93,7 @@ first and find that, as hypothesized, it contains our 22 target
 genomes.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle 5007 data/all.nwk |
+  pickle 5007 all.nwk |
       grep -c '^991910_'
 #+end_src
 #+begin_export latex
@@ -87,24 +101,28 @@ We also find that 5008 contains only 21 target genomes, which makes
 node 5007 our target clade.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle 5008 data/all.nwk |
+  pickle 5008 all.nwk |
       grep -c '^991910_'
 #+end_src
 #+begin_export latex
 To put our target clade in context, we plot the subtree rooted on its
-parent, 5005, without the labels of the internal nodes, to get
-Figure~\ref{fig:all}.
+parent, 5005, without the labels of the internal nodes.
+Figure~\ref{fig:all} shows this tree with the \emph{E. coli} O111:H8
+genomes marked $T$ for \emph{target}, and its two closest relatives
+marked $N$ for \emph{neighbors}.
 \begin{figure}
   \begin{center}
+    \rput(3.8,2.55){$T$}
+    \rput(3.8,0.6){$N$}
     \includegraphics{../query/all}
   \end{center}
-  \caption{The complete genomes of \emph{Escherichia coli} O111:H8,
-    taxon-ID 991910, in the context of all other complete genomes of
-    \emph{E. coli}.}\label{fig:all}
+  \caption{The 48 complete target genomes of \emph{Escherichia coli}
+    O111:H8, $T$, in the context of its closest
+    relatives, its neighbors, $N$.}\label{fig:all}
 \end{figure}
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle -t 5005 data/all.nwk |
+  pickle -t 5005 all.nwk |
       land -r |
       plotTree
 #+end_src
@@ -114,7 +132,7 @@ discovered 26 complete genomes of \emph{E. coli} O111:H8 that are
 classified differently.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle 5007 data/all.nwk |
+  pickle 5007 all.nwk |
       grep -v '^#' -c
 #+end_src
 #+begin_export latex
@@ -123,7 +141,7 @@ O111:H8 genomes, we find 18 \emph{E. coli} (562). We shall look up the
 remaining five taxon-IDs in a moment.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  pickle 5007 data/all.nwk |
+  pickle 5007 all.nwk |
     grep -v '^#' |
     tr '_' ' ' |
     awk '{print $1}' |
@@ -147,7 +165,7 @@ reassuring, albeit not O111:H8.
 #+begin_src sh <<query.sh>>=
   for a in 373045 585396 397453 168927 1055542; do
       echo "# $a"
-      ants $a data/neidb |
+      ants $a neidb |
 	  tail -n 2
   done
 #+end_src
@@ -184,3 +202,148 @@ taxon IDs and their corresponding names is shown in Table
   \end{center}
 \end{table}
 #+end_export
+#+begin_export latex
+\section{Construct Markers for \emph{E. coli} O111:H8}
+At this point we have identified all genomes of our target O111:H8 and
+have placed them in the context of its closest relatives, the two
+neighbors shown in Figure~\ref{fig:all}. This means we can construct
+markers for the target genomes by identifying the genome regions that
+appear in all target genomes that are absent from the neighbors. We
+begin by getting the 50 genome accessions of the taxa in
+Figure~\ref{fig:all}.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  pickle 5005 all.nwk |
+      grep -v '^#' |
+      sed 's/[^_]*_//' > acc.txt
+#+end_src
+#+begin_export latex
+We download the corresponding genomes.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  datasets download genome accession \
+	   --inputfile acc.txt \
+	   --dehydrated \
+	   --exclude-atypical
+#+end_src
+#+begin_export latex
+We unzip and rehydrate the downloaded data.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  unzip ncbi_dataset.zip
+  datasets rehydrate --directory .
+#+end_src
+#+begin_export latex
+We rename the genome files on the pattern $<$taxid$>$\_$<$accession$>$
+and link them into directory \ty{all} as we did in
+Chapter~\ref{ch:p}. The only step that differs is how we obtain the
+matching taxon-ID.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  mkdir all
+  for file in $(ls ncbi_*/*/*/*.fna); do
+      ##<<Get accession, Ch. \ref{ch:p}>>
+      ##<<Get taxon-ID, Ch. \ref{ch:q}>>
+      ##<<Construct new name, Ch. \ref{ch:p}>>
+      ##<<Link file into \ty{all}, Ch. \ref{ch:p}>>
+  done
+#+end_src
+#+begin_export latex
+We get the taxon-ID from direct queries of \ty{neidb}.
+#+end_export
+#+begin_src sh <<Get taxon-ID, Ch. \ref{ch:q}>>=
+  q="select taxid from genome where accession='$acc'"
+  tax=$(sqlite3 neidb "$q")
+#+end_src
+#+begin_export latex
+We use the program \ty{fur} for finding the desired unique genome
+regions~\cite{hau21:fur,vie24:mar}. It runs on a database constructed
+with \ty{makeFurDb}, which takes as input a directory of target
+genomes and a directory of neighbors genomes. We first construct the
+directory of target genomes, \ty{targets}.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  mkdir targets
+  pickle -t 5005 all.nwk |
+      pickle 5007 |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} targets/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+The directory of neighbors genomes, \ty{neighbors}, holds the
+complement of the target genomes.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  mkdir neighbors
+  pickle -t 5005 all.nwk |
+      pickle -c 5007 |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} neighbors/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+We construct the Fur database, \ty{o111h8.db}. This takes roughly
+14\,s on our consumer-grade laptop.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  makeFurDb -t targets -n neighbors -d o111h8.db
+#+end_src
+#+begin_export latex
+We use \ty{fur} to extract the marker candidates from the Fur
+database.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  fur -d o111h8.db |
+      cleanSeq > o111h8.fasta
+#+end_src
+#+begin_export latex
+This yields 63\,kb marker candidates.
+#+end_export
+#+begin_export latex
+cres o111h8.fasta
+#+end_export
+#+begin_export latex
+To extract primers from the marker candidates, we convert them to
+input for \ty{primers3}, run \ty{primers3}, and save the result in
+\ty{o111h8.prim}.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  fa2prim o111h8.fasta |
+      primer3_core > o111h8.prim
+#+end_src
+#+begin_export latex
+We can now extract the primers and their scores from the output of
+\ty{primers3}. When we sort them by penalty, we find the best primers
+have the very low penalty of 0.01.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  prim2tab o111h8.prim |
+      sort -n |
+      head
+#+end_src
+#+begin_export latex
+We find that the best primer pair has a penalty of
+\begin{verbatim}
+# Penalty  Forward                    Reverse                ...
+0.010060   TGTGTACTATTTGCAACGCA       CACATGGCCAGGTATCAAAA   ...
+...
+\end{verbatim}
+#+end_export
+#+begin_export latex
+The primer candidates would next be tested \emph{in silico} for
+sensitivity and specificity on the \emph{E. coli} genomes used in the
+construction of \ty{all.nwk}. Primers that pass could then be further
+tested on a comprehensive DNA database like \ty{nt} before moving on
+to \emph{in vitro} testing.
+#+end_export
+#+begin_export latex
+We are done with the query section of the tutorial, so we clean up.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  rm -r all acc.txt all.nwk md5sum.txt ncbi_dataset \
+     ncbi_dataset.zip neidb neighbors o111h8.db \
+     o111h8.fasta README.md targets
+#+end_src

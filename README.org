@@ -10,14 +10,28 @@ Beatriz Vieira Mourato, Sara-Lena Welk, Fabian Klötzl, and Bernhard
 Haubold
 
 ** Dependencies
-This tutorial has five main dependencies:
+This tutorial has six main dependencies:
 - [[https://github.com/evolbioinf/neighbors][Neighbors]] for finding target and neighbor genomes
 - [[https://www.ncbi.nlm.nih.gov/datasets/][`datasets`]] for downloading genomes
 - [[https://github.com/evolbioinf/fur][Fur]] for finding unique genome regions
 - [[https://github.com/evolbioinf/prim/][Prim]] for designing PCR primers
 - [[https://github.com/evolbioinf/biobox][Biobox]] for general sequence manipulation
+- the Unix tools `curl`, `bzip2`, and `zip` for downloading and
+  decompressing files
+If you are on a Debian system like WSL/Ubuntu, you can install these
+dependencies into `~/bin/` by executing `make setup`. Once that's
+done, make sure `~/bin/` is in your path by running
+#+begin_src sh
+source ~/.profile
+#+end_src
+We have tested this setup on our "minimal box" Docker container, [[https://hub.docker.com/r/haubold/mix][mix]].
 
 ** Download Data Set
-Execute `make` to generate the directory `data` containing the
+Execute `make data` to generate the directory `data` containing the
 Neighbors database, `neidb`, and the tree of all complete genomes of
 /Escherichia coli/, `all.nwk`.
+
+** Tutorial
+Having installed the dependencies and downloaded the data, change into
+directory `tutorial`. This contains the scripts `pilot.sh` and
+`query.sh` described in the [[https://owncloud.gwdg.de/index.php/s/jzF2dkp7L5xjqP1][doc]].
