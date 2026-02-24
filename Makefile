@@ -8,6 +8,8 @@ tangle:
 	cp pilot/pilot.sh tutorial/
 	make -C query
 	cp query/query.sh tutorial/
+	make -C markers
+	cp markers/markers.sh tutorial
 setup:
 	bash scripts/setup.sh
 clean:

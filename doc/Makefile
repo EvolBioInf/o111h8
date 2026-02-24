@@ -1,6 +1,6 @@
 docs = ~/WinHome/ownCloud/docs
 nw = $(shell which noweb)
-src = intro.tex pilot.tex query.tex
+src = intro.tex pilot.tex query.tex markers.tex
 all: $(src) o111h8Doc.pdf
 %.tex:	../*/%.org
 	bash ../scripts/org2nw $< | noweave -n -x > $@

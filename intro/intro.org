@@ -19,16 +19,15 @@ perhaps an hour. And while this may seem quick when analyzing all
 \emph{E. coli} genomes, any computational workflow with this kind of
 run time is difficult to construct, amend, and maintain.
 
-We therefore divide this tutorial into two parts, which we call
-``pilot'' and ``query''. In the pilot part we show how to construct a
-phylogeny from a sample of 50 complete \emph{E. coli} genomes that
-contains all 22 complete O111:H8 genomes in Genbank and 28 closely
-related genomes. The individual computations necessary for this
-workflow take no more than a few seconds on a consumer-grade laptop.
-
-In the query part we take the phylogeny of all 7073 complete
-\emph{E. coli} genomes as given and show how to query it in order to
-find all O111:H8 genomes regardless of their current classification.
-We then show how to use such a phylogeny to construct diagnostic
-primers for O111:H8.
+We therefore begin this tutorial in Chapter~\ref{ch:p} with a pilot
+study on how to construct a phylogeny from a sample of 50 complete
+\emph{E. coli} genomes that contains all 22 complete O111:H8 genomes
+in Genbank and 28 closely related genomes. In Chapter~\ref{ch:q} we
+show how to query the full phylogeny of 7073 \emph{E. coli} genomes to
+identify all genomes of O111:H8. The individual computations necessary
+for this workflow take no more than a few seconds on a consumer-grade
+laptop thus avoiding the lengthy wait for the underlying distance
+computation. In Chapter~\ref{ch:m}, finally, the results of
+Chapter~\ref{ch:q} are used to construct diagnostic PCR primers for
+O111:H8.
 #+end_export

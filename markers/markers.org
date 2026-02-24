@@ -1,0 +1,151 @@
+#+begin_export latex
+In Chapter~\ref{ch:q} we identified all genomes of our target O111:H8
+and placed them in the context of its closest relatives, the two
+neighbors shown in Figure~\ref{fig:all}. This means we can construct
+markers for the target genomes by identifying the genome regions that
+appear in all target genomes that are absent from the neighbors. We
+begin by linking the tree of all \emph{E. coli} genomes into our
+working directory.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  ln -s ../data/all.nwk
+#+end_src
+#+begin_export latex
+From this tree we get the 50 genome accessions of the taxa in
+Figure~\ref{fig:all}.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  pickle 5005 all.nwk |
+      grep -v '^#' |
+      sed 's/[^_]*_//' > acc.txt
+#+end_src
+#+begin_export latex
+We download the corresponding genomes.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  datasets download genome accession \
+	   --inputfile acc.txt \
+	   --dehydrated \
+	   --exclude-atypical
+#+end_src
+#+begin_export latex
+We unzip and rehydrate the downloaded data.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  unzip ncbi_dataset.zip
+  datasets rehydrate --directory .
+#+end_src
+#+begin_export latex
+We rename the genome files on the pattern $<$taxid$>$\_$<$accession$>$
+and link them into directory \ty{all} as we did in
+Chapter~\ref{ch:p}. The only step that differs is how we obtain the
+matching taxon-ID. For that we shall use \ty{neidb}, which we first
+link to our working directory.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  ln -s ../data/neidb
+#+end_src
+#+begin_export latex
+Now we can make the directory \ty{all} and iterate over the data files
+to link them into it.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  mkdir all
+  for file in $(ls ncbi_*/*/*/*.fna); do
+      ##<<Get accession, Ch. \ref{ch:p}>>
+      ##<<Get taxon-ID, Ch. \ref{ch:q}>>
+      ##<<Construct new name, Ch. \ref{ch:p}>>
+      ##<<Link file into \ty{all}, Ch. \ref{ch:p}>>
+  done
+#+end_src
+#+begin_export latex
+We get the taxon-ID from direct queries of \ty{neidb}.
+#+end_export
+#+begin_src sh <<Get taxon-ID, Ch. \ref{ch:q}>>=
+  q="select taxid from genome where accession='$acc'"
+  tax=$(sqlite3 neidb "$q")
+#+end_src
+#+begin_export latex
+We use the program \ty{fur} for finding the desired unique genome
+regions~\cite{hau21:fur,vie24:mar}. It runs on a database constructed
+with \ty{makeFurDb}, which takes as input a directory of target
+genomes and a directory of neighbors genomes. We first construct the
+directory of target genomes, \ty{targets}.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  mkdir targets
+  pickle -t 5005 all.nwk |
+      pickle 5007 |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} targets/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+The directory of neighbors genomes, \ty{neighbors}, holds the
+complement of the target genomes.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  mkdir neighbors
+  pickle -t 5005 all.nwk |
+      pickle -c 5007 |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} neighbors/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+We construct the Fur database, \ty{o111h8.db}. This takes roughly
+14\,s on our consumer-grade laptop.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  makeFurDb -t targets -n neighbors -d o111h8.db
+#+end_src
+#+begin_export latex
+We use \ty{fur} to extract the marker candidates from the Fur
+database.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  fur -d o111h8.db |
+      cleanSeq > o111h8.fasta
+#+end_src
+#+begin_export latex
+This yields 63\,kb marker candidates.
+#+end_export
+#+begin_export latex
+cres o111h8.fasta
+#+end_export
+#+begin_export latex
+To extract primers from the marker candidates, we convert them to
+input for \ty{primers3}, run \ty{primers3}, and save the result in
+\ty{o111h8.prim}.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  fa2prim o111h8.fasta |
+      primer3_core > o111h8.prim
+#+end_src
+#+begin_export latex
+We can now extract the primers and their scores from the output of
+\ty{primers3}. When we sort them by penalty, we find the best primers
+have the very low penalty of 0.01.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  prim2tab o111h8.prim |
+      sort -n |
+      head
+#+end_src
+#+begin_export latex
+We find that the best primer pair has a penalty of
+\begin{verbatim}
+# Penalty  Forward                    Reverse                ...
+0.010060   TGTGTACTATTTGCAACGCA       CACATGGCCAGGTATCAAAA   ...
+...
+\end{verbatim}
+#+end_export
+#+begin_export latex
+The primer candidates would next be tested \emph{in silico} for
+sensitivity and specificity on the \emph{E. coli} genomes used in the
+construction of \ty{all.nwk}. Primers that pass could then be further
+tested on a comprehensive DNA database like \ty{nt} before moving on
+to \emph{in vitro} testing.
+#+end_export

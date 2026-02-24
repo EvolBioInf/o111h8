@@ -34,5 +34,5 @@ Neighbors database, `neidb`, and the tree of all complete genomes of
 
 ** Tutorial
 Having installed the dependencies and downloaded the data, change into
-directory `tutorial`. This contains the scripts `pilot.sh` and
-`query.sh` described in the [[https://owncloud.gwdg.de/index.php/s/jzF2dkp7L5xjqP1][doc]].
+directory `tutorial`. This contains the three scripts `pilot.sh`, 
+`query.sh`, and `markers.sh` described in the [[https://owncloud.gwdg.de/index.php/s/jzF2dkp7L5xjqP1][doc]].
