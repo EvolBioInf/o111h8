@@ -1,34 +1,34 @@
 #+begin_export latex
-Bacerial genome sequencing is now routine in many clinical
+Bacterial genome sequencing is now routine in many clinical
 settings. To make the best use of the resulting wealth of sequence
 data, it needs to be correctly classified. How to do this at the
-subspecies level is the topic of our forthcoming manuscript. In this
-accompanying tutorial we show in detail how to reclassify the genomes
-of a particular target organism, \emph{Escherichia coli} serotype
-O111:H8. Serotype O111:H8 belongs to the ``Big Six'' of food-borne
-pathogenic \emph{E. coli} that are associated world-wide with disease
-outbreaks ranging from gastroenteritis and bloody diarrhea to
-potentialy fatal complications, such as acute encephalopathy. One
-possible use of such subspecies level genome reclassification is to
-extract diagnostic markers from the genomes, and we show how to do
-that, too.
+subspecies level is the topic of our forthcoming manuscript entitled
+\textit{XXX}. In this accompanying tutorial we show in detail how to
+reclassify the genomes of a particular target organism,
+\emph{Escherichia coli} serotype O111:H8. Serotype O111:H8 belongs to
+the ``Big Six'' of food-borne pathogenic \emph{E. coli} that are
+associated world-wide with disease outbreaks ranging from
+gastroenteritis and bloody diarrhea to potentially fatal
+complications, such as acute encephalopathy. One possible use of such
+subspecies level genome reclassification is to extract diagnostic
+markers from the genomes, and we show how to do that, too.
 
 Since \emph{E. coli} is one of the most intensively sequenced
-bacterial taxa, we shall analyze over 7000 genomes, which takes
+bacterial taxa, we shall analyze over 7,000 genomes, which takes
 perhaps an hour. And while this may seem quick when analyzing all
 \emph{E. coli} genomes, any computational workflow with this kind of
 run time is difficult to construct, amend, and maintain.
 
-We therefore divide this tutorial into two p arts, which we call
+We therefore divide this tutorial into two parts, which we call
 ``pilot'' and ``query''. In the pilot part we show how to construct a
 phylogeny from a sample of 50 complete \emph{E. coli} genomes that
 contains all 22 complete O111:H8 genomes in Genbank and 28 closely
-related genomes. We then show how to use such a phylogeny to construct
-diagnostic primers for O111:H8. The individual computations necessary
-for this workflow take no more than a few seconds on a consumer-grade
-laptop.
+related genomes. The individual computations necessary for this
+workflow take no more than a few seconds on a consumer-grade laptop.
 
 In the query part we take the phylogeny of all 7073 complete
 \emph{E. coli} genomes as given and show how to query it in order to
 find all O111:H8 genomes regardless of their current classification.
+We then show how to use such a phylogeny to construct diagnostic
+primers for O111:H8.
 #+end_export

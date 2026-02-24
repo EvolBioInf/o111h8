@@ -66,10 +66,10 @@ belonging neither to O111:H8 nor to its parent.
 #+end_src
 #+begin_export latex
 If we take the species \emph{E. coli} as target and count all of its
-complete genomes, we get 7172. This tells us that only a small
-fraction, $(528+22)/7172\times 100\approx 8\%$ of \emph{E. coli} genomes are
-classified below the species level, when probably they all also belong
-to a category below that level.
+complete genomes, we get 7,172. This tells us that only a small
+fraction, $(528+22)/7172\times 100\approx 8\%$ of \emph{E. coli}
+genomes are classified below the species level, when probably they all
+also belong to a category below that level.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
   neighbors -l -L complete -t 562 -o neidb |

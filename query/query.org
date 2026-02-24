@@ -8,7 +8,7 @@ calculated with \ty{phylonium}.
   ln -s ../data/all.nwk
 #+end_src
 #+begin_export latex
-We count the 7073 taxa on the tree by picking its root, node 1, and
+We count the 7,073 taxa on the tree by picking its root, node 1, and
 counting the listed leaves.
 #+end_export
 #+begin_src sh <<query.sh>>=
@@ -127,7 +127,7 @@ marked $N$ for \emph{neighbors}.
       plotTree
 #+end_src
 #+begin_export latex
-We count the 48 complete genomes on node 5007. This means we have
+We count 48 complete genomes on node 5007. This means we have
 discovered 26 complete genomes of \emph{E. coli} O111:H8 that are
 classified differently.
 #+end_export
