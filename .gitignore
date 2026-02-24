@@ -9,6 +9,7 @@ doc/*.pdf
 doc/pilot.tex
 doc/query.tex
 doc/intro.tex
+doc/markers.tex
 pilot/*
 !pilot/all.ps
 !pilot/Makefile
