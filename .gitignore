@@ -21,7 +21,7 @@ query/*
 tutorial/*
 !tutorial/pilot.sh
 !tutorial/query.sh
+!tutorial/markers.sh
 markers/*
 !markers/Makefile
 !markers/markers.org
-!markers/markers.sh

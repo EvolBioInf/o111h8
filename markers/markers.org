@@ -8,7 +8,7 @@ begin by linking the tree of all \emph{E. coli} genomes into our
 working directory.
 #+end_export
 #+begin_src sh <<markers.sh>>=
-  ln -s ../data/all.nwk
+  ln -s ../data/phylonium.nwk all.nwk
 #+end_src
 #+begin_export latex
 From this tree we get the 50 genome accessions of the taxa in
@@ -148,4 +148,12 @@ sensitivity and specificity on the \emph{E. coli} genomes used in the
 construction of \ty{all.nwk}. Primers that pass could then be further
 tested on a comprehensive DNA database like \ty{nt} before moving on
 to \emph{in vitro} testing.
+
+We are finished with marker discovery, so we delete the files we
+generated.
 #+end_export
+#+begin_src sh <<markers.sh>>=
+  rm -r all acc.txt all.nwk md5sum.txt ncbi_dataset \
+     ncbi_dataset.zip neidb neighbors o111h8.db \
+     o111h8.fasta o111h8.prim README.md targets
+#+end_src

@@ -36,4 +36,4 @@ fintac -t 991910 all.nwk
 pickle 29 all.nwk |
     grep -c 991910
 rm -r accTax.txt acc.txt all all.nwk md5sum.txt \
-   ncbi_dataset ncbi_dataset.zip README.md
+   ncbi_dataset ncbi_dataset.zip neidb README.md

@@ -4,8 +4,11 @@ repo. We link the phylogeny of all complete \emph{E. coli} genomes
 calculated with \ty{phylonium}.
 #+end_export
 #+begin_src sh <<query.sh>>=
-  ln -s ../data/all.nwk
+  ln -s ../data/phylonium.nwk all.nwk
 #+end_src
+
+#+RESULTS:
+
 #+begin_export latex
 We count the 7,073 taxa on the tree by picking its root, node 1, and
 counting the listed leaves.
@@ -201,3 +204,10 @@ taxon IDs and their corresponding names is shown in Table
   \end{center}
 \end{table}
 #+end_export
+#+begin_export latex
+We've reached the end of the query section, so we clean up the files
+we have produced.
+#+end_export
+#+begin_src sh <<query.sh>>=
+  rm all.nwk neidb
+#+end_src
