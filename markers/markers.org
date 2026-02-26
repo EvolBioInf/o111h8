@@ -113,13 +113,13 @@ database.
 This yields 63\,kb marker candidates, or, if we subtract the remaining
 N's, $62803-1183\approx 62$\,kb.
 #+end_export
-#+begin_export latex
+#+begin_src sh <<markers.sh>>=
 cres markers.fasta
-#+end_export
+#+end_src
 #+begin_export latex
 We'd expect these marker candidates to be a subset of the candidates
 found in the pilot study in Chapter~\ref{ch:p}. We test this using
-Blast to find that 51,184\,bp of \ty{markers.fasta} in
+Blast to find 51,184\,bp of \ty{markers.fasta} in
 \ty{pilot.fasta}, that is
 \[
 51184/(62803-1183)\times 100\approx 83\,\%.
