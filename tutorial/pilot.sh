@@ -35,5 +35,26 @@ mv t all.nwk
 fintac -t 991910 all.nwk
 pickle 29 all.nwk |
     grep -c 991910
+mkdir targets
+pickle 29 all.nwk |
+    grep -v '^#' |
+    while read name; do
+          ln -s $(pwd)/all/${name} targets/${name}.fasta
+    done
+mkdir neighbors
+pickle -c 29 all.nwk |
+    grep -v '^#' |
+    while read name; do
+          ln -s $(pwd)/all/${name} neighbors/${name}.fasta
+    done
+makeFurDb -t targets -n neighbors -d pilot.db
+fur -d pilot.db |
+    cleanSeq > pilot.fasta
+cres pilot.fasta
+fa2prim pilot.fasta |
+    primer3_core |
+    prim2tab |
+    head
 rm -r accTax.txt acc.txt all all.nwk md5sum.txt \
-   ncbi_dataset ncbi_dataset.zip neidb README.md
+   ncbi_dataset ncbi_dataset.zip neidb neighbors \
+   pilot.db README.md targets

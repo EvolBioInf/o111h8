@@ -5,4 +5,5 @@ pilot.sh: pilot.org
 test: clean pilot.sh
 	bash pilot.sh
 clean:
-	rm -rf accTax.txt acc.txt all all.nwk md5sum.txt ncbi_dataset ncbi_dataset.zip pilot.sh README.md
+	rm -rf accTax.txt acc.txt all all.nwk md5sum.txt ncbi_dataset ncbi_dataset.zip pilot.sh \
+	README.md neighbors targets pilot.fasta

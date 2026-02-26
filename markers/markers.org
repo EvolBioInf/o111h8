@@ -95,34 +95,50 @@ complement of the target genomes.
       done
 #+end_src
 #+begin_export latex
-We construct the Fur database, \ty{o111h8.db}. This takes roughly
+We construct the Fur database, \ty{markers.db}. This takes roughly
 14\,s on our consumer-grade laptop.
 #+end_export
 #+begin_src sh <<markers.sh>>=
-  makeFurDb -t targets -n neighbors -d o111h8.db
+  makeFurDb -t targets -n neighbors -d markers.db
 #+end_src
 #+begin_export latex
 We use \ty{fur} to extract the marker candidates from the Fur
 database.
 #+end_export
 #+begin_src sh <<markers.sh>>=
-  fur -d o111h8.db |
-      cleanSeq > o111h8.fasta
+  fur -d markers.db |
+      cleanSeq > markers.fasta
 #+end_src
 #+begin_export latex
-This yields 63\,kb marker candidates.
+This yields 63\,kb marker candidates, or, if we subtract the remaining
+N's, $62803-1183\approx 62$\,kb.
 #+end_export
 #+begin_export latex
-cres o111h8.fasta
+cres markers.fasta
 #+end_export
+#+begin_export latex
+We'd expect these marker candidates to be a subset of the candidates
+found in the pilot study in Chapter~\ref{ch:p}. We test this using
+Blast to find that 51,184\,bp of \ty{markers.fasta} in
+\ty{pilot.fasta}, that is
+\[
+51184/(62803-1183)\times 100\approx 83\,\%.
+\]
+This is not quite the expected 100\,\%, but perhaps not too far off.
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  blastn -query markers.fasta -subject pilot.fasta \
+	 -outfmt "6 qstart qend"  |
+      awk '{l=$2-$1+1;s+=l}END{print s}'
+#+end_src
 #+begin_export latex
 To extract primers from the marker candidates, we convert them to
 input for \ty{primers3}, run \ty{primers3}, and save the result in
-\ty{o111h8.prim}.
+\ty{markers.prim}.
 #+end_export
 #+begin_src sh <<markers.sh>>=
-  fa2prim o111h8.fasta |
-      primer3_core > o111h8.prim
+  fa2prim markers.fasta |
+      primer3_core > markers.prim
 #+end_src
 #+begin_export latex
 We can now extract the primers and their scores from the output of
@@ -130,7 +146,7 @@ We can now extract the primers and their scores from the output of
 have the very low penalty of 0.01.
 #+end_export
 #+begin_src sh <<markers.sh>>=
-  prim2tab o111h8.prim |
+  prim2tab markers.prim |
       sort -n |
       head
 #+end_src
@@ -148,12 +164,13 @@ sensitivity and specificity on the \emph{E. coli} genomes used in the
 construction of \ty{all.nwk}. Primers that pass could then be further
 tested on a comprehensive DNA database like \ty{nt} before moving on
 to \emph{in vitro} testing.
-
+#+end_export
+#+begin_export latex
 We are finished with marker discovery, so we delete the files we
 generated.
 #+end_export
 #+begin_src sh <<markers.sh>>=
   rm -r all acc.txt all.nwk md5sum.txt ncbi_dataset \
-     ncbi_dataset.zip neidb neighbors o111h8.db \
-     o111h8.fasta o111h8.prim README.md targets
+     ncbi_dataset.zip markers.db markers.prim neidb \
+     neighbors README.md targets
 #+end_src

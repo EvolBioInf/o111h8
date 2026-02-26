@@ -231,10 +231,87 @@ strains of O111:H8 it contains.
       grep -c 991910
 #+end_src
 #+begin_export latex
+Given that we have identified target and neighbor genomes, we can
+construct markers for the target genomes by identifying the genome
+regions that appear in all target genomes that are absent from the
+neighbors. We use the program \ty{fur} for finding these unique genome
+regions. It runs on a database constructed with \ty{makeFurDb}, which
+takes as input a directory of target genomes and a directory of
+neighbors genomes. We first construct the directory of target genomes,
+\ty{targets}.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  mkdir targets
+  pickle 29 all.nwk |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} targets/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+The directory of neighbors genomes, \ty{neighbors}, holds the
+complement of the target genomes.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  mkdir neighbors
+  pickle -c 29 all.nwk |
+      grep -v '^#' |
+      while read name; do
+	  ln -s $(pwd)/all/${name} neighbors/${name}.fasta
+      done
+#+end_src
+#+begin_export latex
+We construct the Fur database, \ty{pilot.db}. This takes roughly
+14\,s on our consumer-grade laptop.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  makeFurDb -t targets -n neighbors -d pilot.db
+#+end_src
+#+begin_export latex
+We use \ty{fur} to extract the marker candidates from the Fur
+database.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  fur -d pilot.db |
+      cleanSeq > pilot.fasta
+#+end_src
+#+begin_export latex
+This yields 157\,kb marker candidates.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+cres pilot.fasta
+#+end_src
+#+begin_export latex
+To extract primers from the marker candidates, we convert them to
+input for primer construction, run \ty{primers3} on them, and extract
+the top primer pairs from them, the best of which has penalty 0.04.
+#+end_export
+#+begin_src sh <<pilot.sh>>=
+  fa2prim pilot.fasta |
+      primer3_core |
+      prim2tab |
+      head
+#+end_src
+#+begin_export latex
+We find that the best primer pair has a penalty of
+\begin{verbatim}
+# Penalty Forward              Reverse               ...
+0.041314  CATGATTTTAAAGGGCGTGC TAGGCAGTATTTGGTGTTGC  ...
+...
+\end{verbatim}
+#+end_export
+#+begin_export latex
+Please note that these are \emph{not} primers intended for further
+use. For a more promising set of primers, please see
+Chapter~\ref{ch:m}.
+#+end_export
+#+begin_export latex
 We end the pilot section of this tutorial by cleaning up our working
-directory.
+directory, while keeping the putative markers we found in
+\ty{markers.fasta}.
 #+end_export
 #+begin_src sh <<pilot.sh>>=
   rm -r accTax.txt acc.txt all all.nwk md5sum.txt \
-     ncbi_dataset ncbi_dataset.zip neidb README.md
+     ncbi_dataset ncbi_dataset.zip neidb neighbors \
+     pilot.db README.md targets
 #+end_src

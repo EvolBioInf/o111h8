@@ -16,7 +16,7 @@ chmod +x ~/bin/datasets
 # Install Fur
 git clone https://github.com/evolbioinf/fur
 cd fur
-bash scripts/sethup.sh
+bash scripts/setup.sh
 make
 ln -s $(pwd)/bin/* ~/bin/
 cd ..

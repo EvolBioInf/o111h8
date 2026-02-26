@@ -5,4 +5,4 @@ markers.sh: markers.org ../pilot/pilot.org
 test: clean markers.sh
 	bash markers.sh
 clean:
-	rm -rf all acc.txt all.nwk md5sum.txt ncbi_dataset ncbi_dataset.zip neidb neighbors o111h8.db o111h8.fasta o111h8.prim markers.sh README.md targets
+	rm -rf all acc.txt all.nwk md5sum.txt ncbi_dataset ncbi_dataset.zip neidb neighbors markers.db markers.fasta markers.prim markers.sh README.md targets

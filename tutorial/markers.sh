@@ -32,14 +32,17 @@ pickle -t 5005 all.nwk |
     while read name; do
           ln -s $(pwd)/all/${name} neighbors/${name}.fasta
     done
-makeFurDb -t targets -n neighbors -d o111h8.db
-fur -d o111h8.db |
-    cleanSeq > o111h8.fasta
-fa2prim o111h8.fasta |
-    primer3_core > o111h8.prim
-prim2tab o111h8.prim |
+makeFurDb -t targets -n neighbors -d markers.db
+fur -d markers.db |
+    cleanSeq > markers.fasta
+blastn -query markers.fasta -subject pilot.fasta \
+         -outfmt "6 qstart qend"  |
+    awk '{l=$2-$1+1;s+=l}END{print s}'
+fa2prim markers.fasta |
+    primer3_core > markers.prim
+prim2tab markers.prim |
     sort -n |
     head
 rm -r all acc.txt all.nwk md5sum.txt ncbi_dataset \
-   ncbi_dataset.zip neidb neighbors o111h8.db \
-   o111h8.fasta o111h8.prim README.md targets
+   ncbi_dataset.zip markers.db markers.prim neidb \
+   neighbors README.md targets
