@@ -68,8 +68,9 @@ belonging neither to O111:H8 nor to its parent.
 If we take the species \emph{E. coli} as target and count all of its
 complete genomes, we get 7,172. This tells us that only a small
 fraction, $(528+22)/7172\times 100\approx 8\%$ of \emph{E. coli}
-genomes are classified below the species level, when probably they all
-also belong to a category below that level.
+genomes are classified below the species level, when probably all
+\emph{E. coli} genomes also belong to a category below the species
+level.
 #+end_export
 #+begin_src sh <<Get genomes, Ch. \ref{ch:p}>>=
   neighbors -l -L complete -t 562 -o neidb |
@@ -114,11 +115,11 @@ downloads the actual genome sequences.
 #+end_src
 #+begin_export latex
 The files we have downloaded are contained in subdirectories and have
-rather long names containing redundant information, for example
+rather long names with redundant information, for example
 \begin{verbatim}
 GCF_000981485.1_EcoliK12AG100_genomic.fna
 \end{verbatim}
-The file names later become leaf labels in our phylogeny. Since our
+These file names later become leaf labels in our phylogeny. Since our
 aim is to classify genomes, we rename the files on the pattern
 $<$taxon-ID$>$\_$<$accession$>$. We also extract them from their
 subdirectories and put them into a single directory, \ty{all}, which
@@ -181,7 +182,7 @@ store it in Newick format in the file \ty{all.nwk}.
       midRoot > all.nwk
 #+end_src
 #+begin_export latex
-We inspect the tree to get Figure~\ref{fig:o111}, where all taxa with
+We plot the tree to get Figure~\ref{fig:o111}, where all taxa with
 the taxon-ID of O111:H8, 991910, cluster together, as they
 should. Moreover, the 991910 clade contains no extraneous accession,
 it is monophyletic.
@@ -194,6 +195,9 @@ it is monophyletic.
     O111:H8.}\label{fig:o111}
 \end{figure}
 #+end_export
+#+begin_src sh <<Calculate phylogeny, Ch. \ref{ch:p}>>=
+  plotTree all.nwk
+#+end_src
 #+begin_export latex
 It is easy to inspect a tree with 50 taxa like
 Figure~\ref{fig:o111}. However, let's go through the steps we would
@@ -211,7 +215,7 @@ in the sense that it contains only O111:H8 and its complement contains
 none. We also note that the distance to its parent is $6\times
 10^{-3}$ substitutions per site. This isn't a lot, but
 Figure~\ref{fig:o111} shows that this branch clearly separates O111:H8
-from the other \emph{E. coli} strains in the tree.
+from the other \emph{E. coli} strains.
 #+end_export
 #+begin_src sh <<Analyze phylogeny, Ch. \ref{ch:p}>>=
   fintac -t 991910 all.nwk
@@ -261,8 +265,8 @@ complement of the target genomes.
       done
 #+end_src
 #+begin_export latex
-We construct the Fur database, \ty{pilot.db}. This takes roughly
-14\,s on our consumer-grade laptop.
+We construct the Fur database, \ty{pilot.db}. This takes roughly 14\,s
+on our run of the mill laptop.
 #+end_export
 #+begin_src sh <<pilot.sh>>=
   makeFurDb -t targets -n neighbors -d pilot.db
@@ -276,7 +280,7 @@ database.
       cleanSeq > pilot.fasta
 #+end_src
 #+begin_export latex
-This yields 157\,kb marker candidates.
+This yields 157\,kb of potential marker material.
 #+end_export
 #+begin_src sh <<pilot.sh>>=
 cres pilot.fasta
@@ -284,19 +288,22 @@ cres pilot.fasta
 #+begin_export latex
 To extract primers from the marker candidates, we convert them to
 input for primer construction, run \ty{primers3} on them, and extract
-the top primer pairs from them, the best of which has penalty 0.04.
+the top primer pairs from them, the best of which has the very low
+penalty 0.00014.
 #+end_export
 #+begin_src sh <<pilot.sh>>=
   fa2prim pilot.fasta |
       primer3_core |
       prim2tab |
+      tail -n +2 |
+      sort -n |
       head
 #+end_src
 #+begin_export latex
 We find that the best primer pair has a penalty of
 \begin{verbatim}
-# Penalty Forward              Reverse               ...
-0.041314  CATGATTTTAAAGGGCGTGC TAGGCAGTATTTGGTGTTGC  ...
+# Penalty  Forward               Reverse               ...
+0.000142   CACCATAATTCTGGGCTACG  CCGCCATACAATCCAGTTAG  ...
 ...
 \end{verbatim}
 #+end_export

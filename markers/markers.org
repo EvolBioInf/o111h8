@@ -39,8 +39,8 @@ We unzip and rehydrate the downloaded data.
 We rename the genome files on the pattern $<$taxid$>$\_$<$accession$>$
 and link them into directory \ty{all} as we did in
 Chapter~\ref{ch:p}. The only step that differs is how we obtain the
-matching taxon-ID. For that we shall use \ty{neidb}, which we first
-link to our working directory.
+matching taxon-ID. For that we shall directly query \ty{neidb}, which
+we first link to our working directory.
 #+end_export
 #+begin_src sh <<markers.sh>>=
   ln -s ../data/neidb
@@ -59,7 +59,7 @@ to link them into it.
   done
 #+end_src
 #+begin_export latex
-We get the taxon-ID from direct queries of \ty{neidb}.
+We get the taxon-ID by querying \ty{neidb}.
 #+end_export
 #+begin_src sh <<Get taxon-ID, Ch. \ref{ch:q}>>=
   q="select taxid from genome where accession='$acc'"
@@ -96,7 +96,7 @@ complement of the target genomes.
 #+end_src
 #+begin_export latex
 We construct the Fur database, \ty{markers.db}. This takes roughly
-14\,s on our consumer-grade laptop.
+14\,s on our generic laptop.
 #+end_export
 #+begin_src sh <<markers.sh>>=
   makeFurDb -t targets -n neighbors -d markers.db
@@ -115,21 +115,6 @@ N's, $62803-1183\approx 62$\,kb.
 #+end_export
 #+begin_src sh <<markers.sh>>=
 cres markers.fasta
-#+end_src
-#+begin_export latex
-We'd expect these marker candidates to be a subset of the candidates
-found in the pilot study in Chapter~\ref{ch:p}. We test this using
-Blast to find 51,184\,bp of \ty{markers.fasta} in
-\ty{pilot.fasta}, that is
-\[
-51184/(62803-1183)\times 100\approx 83\,\%.
-\]
-This is not quite the expected 100\,\%, but perhaps not too far off.
-#+end_export
-#+begin_src sh <<markers.sh>>=
-  blastn -query markers.fasta -subject pilot.fasta \
-	 -outfmt "6 qstart qend"  |
-      awk '{l=$2-$1+1;s+=l}END{print s}'
 #+end_src
 #+begin_export latex
 To extract primers from the marker candidates, we convert them to

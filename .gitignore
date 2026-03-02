@@ -6,6 +6,7 @@ doc/*.dvi
 doc/*.log
 doc/*.out
 doc/*.pdf
+doc/*.toc
 doc/pilot.tex
 doc/query.tex
 doc/intro.tex

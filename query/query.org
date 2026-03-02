@@ -6,9 +6,6 @@ calculated with \ty{phylonium}.
 #+begin_src sh <<query.sh>>=
   ln -s ../data/phylonium.nwk all.nwk
 #+end_src
-
-#+RESULTS:
-
 #+begin_export latex
 We count the 7,073 taxa on the tree by picking its root, node 1, and
 counting the listed leaves.
@@ -110,17 +107,19 @@ node 5007 our target clade.
 To put our target clade in context, we plot the subtree rooted on its
 parent, 5005, without the labels of the internal nodes.
 Figure~\ref{fig:all} shows this tree with the \emph{E. coli} O111:H8
-genomes marked $T$ for \emph{target}, and its two closest relatives
-marked $N$ for \emph{neighbors}.
+genomes marked $T$ for \emph{target}, its two closest relatives marked
+$N$ for \emph{neighbors}, and the node originally picked by
+\ty{fintac} marked $F$.
 \begin{figure}
   \begin{center}
     \rput(3.8,2.55){$T$}
     \rput(3.8,0.6){$N$}
+    \rput(6.15,9.55){$F$}
     \includegraphics{../query/all}
   \end{center}
   \caption{The 48 complete target genomes of \emph{Escherichia coli}
     O111:H8, $T$, in the context of its closest
-    relatives, its neighbors, $N$.}\label{fig:all}
+    relatives, the two neighbors in clade $N$.}\label{fig:all}
 \end{figure}
 #+end_export
 #+begin_src sh <<query.sh>>=
@@ -179,8 +178,8 @@ reassuring, albeit not O111:H8.
 ...
 \end{verbatim}
 
-From this, we identify that \textit{E.coli} O111:NM is the serotype
-that has been mostly mistaken for O111:H8. The full description of the
+This means that \textit{E.coli} O111:NM is the serotype that has most
+frequently been mistaken for O111:H8. The full description of the
 taxon IDs and their corresponding names is shown in Table
 \ref{tbl:O111types}.
 
@@ -205,7 +204,7 @@ taxon IDs and their corresponding names is shown in Table
 \end{table}
 #+end_export
 #+begin_export latex
-We've reached the end of the query section, so we clean up the files
+We've reached the end of the query section, so we remove the two files
 we have produced.
 #+end_export
 #+begin_src sh <<query.sh>>=
