@@ -4,7 +4,7 @@ food poisoning in the US and beyond. In this tutorial we analyze the
 subtype with H8 flagella antigen in the context of all /E. coli/
 genomes with a view to designing serotype-specific diagnostic
 markers. This analysis is part of a forthcoming manuscript entitled
-XXX.
+/Sorting Bacterial Genomes Below Species Rank/.
 
 ** Authors
 Beatriz Vieira Mourato, Sara-Lena Welk, Fabian Klötzl, and Bernhard
