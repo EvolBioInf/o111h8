@@ -20,8 +20,11 @@ This tutorial has six main dependencies:
 - the Unix tools `curl`, `bzip2`, and `zip` for downloading and
   decompressing files
 If you are on a Debian system like WSL/Ubuntu, you can install these
-dependencies into `~/bin/` by executing `make setup`. Once that's
-done, make sure `~/bin/` is in your path by running
+dependencies into `~/bin/` by executing
+#+begin_src sh
+  bash scripts/setup.sh
+#+end_src
+Once that's done, make sure `~/bin/` is in your path by running
 #+begin_src sh
 source ~/.profile
 #+end_src
@@ -29,8 +32,10 @@ We have tested this setup on our "minimal box" Docker container, [[https://hub.d
 
 ** Download Data Set
 Execute `make data` to generate the directory `data` containing the
-Neighbors database, `neidb`, and the tree of all complete genomes of
-/Escherichia coli/, `all.nwk`.
+Neighbors database, `neidb`, and the trees of all complete genomes of
+/Escherichia coli/ calculated with `skani` and `phylonium`,
+`skani.nwk` and `phylonium.nwk`. It also contains the `orthoANI`
+version of the tree shown Figure 8, `orthoANI.nwk`
 
 ** Tutorial
 Having installed the dependencies and downloaded the data, change into
