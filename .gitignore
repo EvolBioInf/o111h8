@@ -11,6 +11,8 @@ doc/pilot.tex
 doc/query.tex
 doc/intro.tex
 doc/markers.tex
+doc/version.txt
+doc/date.txt
 pilot/*
 !pilot/all.ps
 !pilot/Makefile
