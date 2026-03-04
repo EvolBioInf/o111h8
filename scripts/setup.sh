@@ -1,8 +1,5 @@
 # Construct bin if necessary
 test -d bin || mkdir bin
-# Install curl, bzip2, and zip
-sudo apt update
-sudo apt install -y curl bzip2 zip sqlite3
 # Install Neighbors
 git clone https://github.com/evolbioinf/neighbors
 cd neighbors
@@ -34,3 +31,6 @@ bash scripts/setup.sh
 make
 ln -s $(pwd)/bin/* ~/bin/
 cd ..
+# Install curl, bzip2, and zip
+sudo apt update
+sudo apt install -y curl bzip2 zip
