@@ -1,13 +1,15 @@
 BEGIN {
   if (!r) {
-    print "Usage: awk -f ranks.awk -v r=<root> [-v d=<db>]"
+    print "Usage: awk -f ranks.awk -v r=<root> [-v d=<db> -v l=<levels>]"
     print "Find all combinations of ranks and the genomes they contain for a given root taxon."
     print "Example: awk -f ranks.awk -v r=562"
     exit 1
   }
   if (!d)
     d = "neidb"
-  dcmd = sprintf("dree -n -l -g %d %s", r, d)
+  if (!l)
+    l = "complete,chromosome,scaffold,contig"
+  dcmd = sprintf("dree -l -g -L %s %d %s", l, r, d)
   atmp = "ants %s " d
     # For each dree result, use ants to find the chain of ranks
   while (dcmd | getline) {
