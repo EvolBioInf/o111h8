@@ -3,7 +3,7 @@ Bacterial genome sequencing is now routine in many clinical
 settings. To make the best use of the resulting wealth of sequence
 data, it needs to be correctly classified. How to do this at the
 subspecies level is the topic of our forthcoming manuscript entitled
-\textit{Sorting Bacterial Genomes Below Species Rank}. In this
+\textit{Sorting Bacterial Genomes Below the Species Rank}. In this
 accompanying tutorial we show in detail how to reclassify the genomes
 of a particular target organism, \emph{Escherichia coli} serotype
 O111:H8. Serotype O111:H8 belongs to the ``Big Six'' of food-borne
