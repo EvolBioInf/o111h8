@@ -1,5 +1,5 @@
 # Construct bin if necessary
-test -d bin || mkdir bin
+test -d ~/bin || mkdir ~/bin
 # Install Neighbors
 git clone https://github.com/evolbioinf/neighbors
 cd neighbors
