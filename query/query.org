@@ -108,18 +108,19 @@ To put our target clade in context, we plot the subtree rooted on its
 parent, 5005, without the labels of the internal nodes.
 Figure~\ref{fig:all} shows this tree with the \emph{E. coli} O111:H8
 genomes marked $T$ for \emph{target}, its two closest relatives marked
-$N$ for \emph{neighbors}, and the node originally picked by
-\ty{fintac} marked $F$.
+$N$ for \emph{neighbors}, and the node with the highest split score
+originally picked by \ty{fintac} marked $S$.
 \begin{figure}
   \begin{center}
     \rput(3.8,2.55){$T$}
     \rput(3.8,0.6){$N$}
-    \rput(6.15,9.55){$F$}
+    \rput(6.15,9.55){$S$}
     \includegraphics{../query/all}
   \end{center}
   \caption{The 48 complete target genomes of \emph{Escherichia coli}
-    O111:H8, $T$, in the context of its closest
-    relatives, the two neighbors in clade $N$.}\label{fig:all}
+    O111:H8, $T$, in the context of its closest relatives, the two
+    neighbors in clade $N$; $S$ is the clade with the highest split
+    score in the full species phylogeny.}\label{fig:all}
 \end{figure}
 #+end_export
 #+begin_src sh <<query.sh>>=
