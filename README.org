@@ -20,7 +20,7 @@ This tutorial has six main dependencies:
 - the Unix tools `curl`, `bzip2`, and `zip` for downloading and
   decompressing files
 If you are on a Debian system like WSL/Ubuntu, you can install these
-dependencies into `~/bin/` by executing
+dependencies into `~/bin/` by executing from inside the `o111h8` repo
 #+begin_src sh
   bash scripts/setup.sh
 #+end_src
