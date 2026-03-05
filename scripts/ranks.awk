@@ -11,14 +11,11 @@ BEGIN {
     l = "complete,chromosome,scaffold,contig"
   dcmd = sprintf("dree -l -g -L %s %d %s", l, r, d)
   atmp = "ants %s " d
-    # For each dree result, use ants to find the chain of ranks
+  # For each dree result, use ants to find the chain of ranks
   while (dcmd | getline) {
     if (!/^#/) {
       taxid = $1
-      if ($3 == "no")
-	genomes = $5
-      else
-	genomes = $4
+      genomes = $NF
       acmd = sprintf(atmp, taxid)
       found = 0
       key = ""
