@@ -40,7 +40,10 @@ BEGIN {
     }
   }
   close(dcmd)
+  for (key in counts)
+    sum += counts[key]
   for (key in counts) {
-    print key, counts[key]
+    p = counts[key]/sum * 100
+    printf "%s %d %.1f\n", key, counts[key], p | "sort"
   }
 }
